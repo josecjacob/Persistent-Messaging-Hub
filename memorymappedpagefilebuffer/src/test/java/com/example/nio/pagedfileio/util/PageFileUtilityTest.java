@@ -42,6 +42,8 @@ public class PageFileUtilityTest {
 	}
 
 	/**
+	 * Make sure the intended file we plan to act upon does not exist.
+	 * 
 	 * @throws java.lang.Exception
 	 */
 	@Before
@@ -73,6 +75,13 @@ public class PageFileUtilityTest {
 				Files.size(bigFileInTemp.toPath()));
 	}
 
+/**
+	 * Test method for
+	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#createMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * .
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testMemoryMappedFileDirectBufferWithSplitBufferOfPageSize()
 			throws IOException {

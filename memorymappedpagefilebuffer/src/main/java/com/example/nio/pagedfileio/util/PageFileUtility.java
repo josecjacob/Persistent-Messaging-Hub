@@ -14,6 +14,13 @@ import com.google.common.base.Preconditions;
 
 public class PageFileUtility {
 
+	/**
+	 * Prepare a page file that will be used as the backing store for all queued
+	 * operations.
+	 * 
+	 * @param pageFileLocation
+	 * @throws IOException
+	 */
 	public static void preparePageFile(String pageFileLocation)
 			throws IOException {
 
@@ -38,26 +45,25 @@ public class PageFileUtility {
 		}
 	}
 
-	public static void initializePageFile(Path pageFileLocation) {
-
-	}
-
 	/**
 	 * Create a queue of buffers that slice a memory mapped file. Each of these
 	 * buffers represent a section of the memory mapped file. The number of
 	 * files and the size are specified as arguments.
 	 * 
-	 * Preconditions: 
+	 * Preconditions:
 	 * 
-	 * 1) The file should exist. 
-	 * 2) The file's size should be the same as pageSize * numberOfPages.
+	 * 1) The file should exist. 2) The file's size should be the same as
+	 * pageSize * numberOfPages.
 	 * 
 	 * @param pageFileLocation
 	 *            The fully qualified path to the file. This should be the
 	 *            absolute path to the file.
 	 * @param pageSize
+	 *            The size of each page in the file.
 	 * @param numberOfPages
-	 * @return
+	 *            The number of pages within the file.
+	 * @return The queue of buffers that are slices of the memory mapped file,
+	 *         each the size of the page file.
 	 * @throws IOException
 	 */
 	public static Queue<ByteBuffer> createMemoryMappedFileBufferQueue(

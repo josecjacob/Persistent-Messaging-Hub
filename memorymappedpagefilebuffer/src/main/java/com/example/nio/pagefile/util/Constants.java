@@ -1,4 +1,4 @@
-package com.example.nio.pagedfileio.util;
+package com.example.nio.pagefile.util;
 
 /**
  * The list of constants that we will use within the project.

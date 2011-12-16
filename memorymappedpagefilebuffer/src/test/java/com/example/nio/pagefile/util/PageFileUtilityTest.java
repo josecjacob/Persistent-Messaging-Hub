@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.example.nio.pagedfileio.util;
+package com.example.nio.pagefile.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +18,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.example.nio.pagefile.util.Constants;
+import com.example.nio.pagefile.util.PageFileUtility;
 
 /**
  * Tests for {@link PageFileUtility}.
@@ -86,7 +89,7 @@ public class PageFileUtilityTest {
 
 	/**
 	 * Test method for
-	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#preparePageFile(java.nio.file.Path)}
+	 * {@link com.example.nio.pagefile.util.PageFileUtility#preparePageFile(java.nio.file.Path)}
 	 * .
 	 * 
 	 * @throws IOException
@@ -102,7 +105,7 @@ public class PageFileUtilityTest {
 
 /**
 	 * Test method for
-	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * {@link com.example.nio.pagefile.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
 	 * .
 	 * 
 	 * @throws IOException
@@ -131,7 +134,7 @@ public class PageFileUtilityTest {
 
 /**
 	 * Test method for
-	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * {@link com.example.nio.pagefile.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
 	 * .
 	 * 
 	 * @throws IOException

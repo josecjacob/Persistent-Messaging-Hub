@@ -1,4 +1,4 @@
-package com.example.nio.pagedfileio.util;
+package com.example.nio.pagefile.util;
 
 import java.io.File;
 import java.io.IOException;

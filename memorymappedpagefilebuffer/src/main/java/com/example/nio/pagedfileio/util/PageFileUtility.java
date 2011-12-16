@@ -19,7 +19,10 @@ public class PageFileUtility {
 	 * operations.
 	 * 
 	 * @param pageFileLocation
+	 *            The fully qualified path to the file. This should be the
+	 *            absolute path to the file.
 	 * @throws IOException
+	 *             If an I/O error occurs.
 	 */
 	public static void preparePageFile(String pageFileLocation)
 			throws IOException {
@@ -46,14 +49,16 @@ public class PageFileUtility {
 	}
 
 	/**
-	 * Create a queue of buffers that slice a memory mapped file. Each of these
-	 * buffers represent a section of the memory mapped file. The number of
-	 * files and the size are specified as arguments.
+	 * Create a queue of buffers that slice a memory mapped, read write file.
+	 * Each of these buffers represent a section of the memory mapped file. The
+	 * number of files and the size are specified as arguments.
 	 * 
 	 * Preconditions:
 	 * 
-	 * 1) The file should exist. 2) The file's size should be the same as
-	 * pageSize * numberOfPages.
+	 * <p>
+	 * 1) The file should exist.
+	 * <p>
+	 * 2) The file's size should be the same as pageSize * numberOfPages.
 	 * 
 	 * @param pageFileLocation
 	 *            The fully qualified path to the file. This should be the
@@ -65,15 +70,16 @@ public class PageFileUtility {
 	 * @return The queue of buffers that are slices of the memory mapped file,
 	 *         each the size of the page file.
 	 * @throws IOException
+	 *             If an I/O error occurs.
 	 */
-	public static Queue<ByteBuffer> createMemoryMappedFileBufferQueue(
+	public static Queue<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
 			Path pageFileLocation, long pageSize, long numberOfPages)
 			throws IOException {
 		Preconditions.checkState(pageFileLocation.toFile().exists());
 		Preconditions.checkState(pageSize * numberOfPages == Files
 				.size(pageFileLocation));
 		FileChannel rwChannel = new RandomAccessFile(pageFileLocation.toFile(),
-				"rw").getChannel();
+				"rws").getChannel();
 
 		Queue<ByteBuffer> buffers = new PriorityQueue<ByteBuffer>();
 		for (int i = 0; i < Constants.NUMBER_OF_PAGES; i++)

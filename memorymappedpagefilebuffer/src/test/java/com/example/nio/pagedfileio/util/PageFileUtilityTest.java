@@ -20,18 +20,33 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * @author chira
+ * Tests for {@link PageFileUtility}.
  * 
+ * @author chira
  */
 public class PageFileUtilityTest {
 
-	File bigFileInTemp = new File("/tmp/bigfile.txt");
+	private static final File bigFileInTemp = new File("/tmp/bigfile.txt");
+	private static final File bigFileInTempDuplicate = new File(
+			"/tmp/bigfileduplicate.txt");
+	private static final ByteBuffer sampleBuffer = ByteBuffer
+			.allocate((int) Constants.PAGE_SIZE);
+	private static final ByteBuffer zeroFilledBuffer = ByteBuffer
+			.allocate((int) Constants.PAGE_SIZE);
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		byte sampleByte = 0;
+		while (sampleBuffer.hasRemaining())
+			sampleBuffer.put(sampleByte++);
+		sampleBuffer.rewind();
+
+		while (zeroFilledBuffer.hasRemaining())
+			zeroFilledBuffer.put((byte) 0);
+		zeroFilledBuffer.rewind();
 	}
 
 	/**
@@ -50,6 +65,11 @@ public class PageFileUtilityTest {
 	public void setUp() throws Exception {
 		if (bigFileInTemp.exists())
 			bigFileInTemp.delete();
+
+		if (bigFileInTempDuplicate.exists())
+			bigFileInTempDuplicate.delete();
+
+		Thread.sleep(100);
 	}
 
 	/**
@@ -57,6 +77,11 @@ public class PageFileUtilityTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+		// if (bigFileInTemp.exists())
+		// bigFileInTemp.delete();
+		//
+		// if (bigFileInTempDuplicate.exists())
+		// bigFileInTempDuplicate.delete();
 	}
 
 	/**
@@ -77,7 +102,7 @@ public class PageFileUtilityTest {
 
 /**
 	 * Test method for
-	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#createMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
 	 * .
 	 * 
 	 * @throws IOException
@@ -88,15 +113,81 @@ public class PageFileUtilityTest {
 
 		PageFileUtility.preparePageFile(bigFileInTemp.getAbsolutePath());
 		Queue<ByteBuffer> directBufferQueues = PageFileUtility
-				.createMemoryMappedFileBufferQueue(bigFileInTemp.toPath(),
-						Constants.PAGE_SIZE, Constants.NUMBER_OF_PAGES);
+				.createReadWriteMemoryMappedFileBufferQueue(
+						bigFileInTemp.toPath(), Constants.PAGE_SIZE,
+						Constants.NUMBER_OF_PAGES);
 		assertEquals(Constants.NUMBER_OF_PAGES, directBufferQueues.size());
 		assertTrue(directBufferQueues instanceof PriorityQueue<?>);
 		int i = 1;
 		for (ByteBuffer aUnit : directBufferQueues) {
 			assertTrue(aUnit.isDirect());
-			assertEquals("At iteration: " + i++ + " size did not match.",
+			assertEquals("At iteration: " + i + " size did not match.",
 					Constants.PAGE_SIZE, aUnit.capacity());
+			assertTrue("At iteration: " + i++
+					+ ", expected a zero filled buffer, but it was not.",
+					zeroFilledBuffer.equals(aUnit));
 		}
+	}
+
+/**
+	 * Test method for
+	 * {@link com.example.nio.pagedfileio.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * .
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testFillAndVerifyQueueBackedByAMemoryMappedFile()
+			throws IOException {
+
+		PageFileUtility.preparePageFile(bigFileInTemp.getAbsolutePath());
+		Queue<ByteBuffer> directBufferQueues = PageFileUtility
+				.createReadWriteMemoryMappedFileBufferQueue(
+						bigFileInTemp.toPath(), Constants.PAGE_SIZE,
+						Constants.NUMBER_OF_PAGES);
+		assertEquals(Constants.NUMBER_OF_PAGES, directBufferQueues.size());
+		assertTrue(directBufferQueues instanceof PriorityQueue<?>);
+		for (ByteBuffer aUnit : directBufferQueues)
+			fillBufferWithRawData(aUnit);
+
+		int i = 1;
+		for (ByteBuffer aUnit : directBufferQueues)
+			assertTrue("At iteration: " + i++ + " buffers were not equal.",
+					sampleBuffer.equals(aUnit));
+
+		PageFileUtility.preparePageFile(bigFileInTempDuplicate
+				.getAbsolutePath());
+		Queue<ByteBuffer> directBufferQueuesForDuplicate = PageFileUtility
+				.createReadWriteMemoryMappedFileBufferQueue(
+						bigFileInTempDuplicate.toPath(), Constants.PAGE_SIZE,
+						Constants.NUMBER_OF_PAGES);
+
+		i = 1;
+		for (ByteBuffer aUnit : directBufferQueuesForDuplicate)
+			assertTrue("At iteration: " + i++ + " buffers were not equal.",
+					zeroFilledBuffer.equals(aUnit));
+
+		for (ByteBuffer aDuplicateUnit : directBufferQueuesForDuplicate)
+			aDuplicateUnit.put(directBufferQueues.poll());
+
+		i = 1;
+		for (ByteBuffer aDuplicateUnit : directBufferQueuesForDuplicate) {
+			aDuplicateUnit.flip();
+			assertTrue("At iteration: " + i++ + " size did not match.",
+					sampleBuffer.equals(aDuplicateUnit));
+		}
+	}
+
+	/**
+	 * Fill the buffer with raw data that's already set.
+	 * 
+	 * @param aUnit
+	 *            The buffer to be duplicated.
+	 */
+	private void fillBufferWithRawData(ByteBuffer aUnit) {
+		sampleBuffer.rewind();
+		aUnit.put(sampleBuffer);
+		sampleBuffer.rewind();
+		aUnit.rewind();
 	}
 }

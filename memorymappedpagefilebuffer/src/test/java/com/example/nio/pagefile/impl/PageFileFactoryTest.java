@@ -3,6 +3,8 @@
  */
 package com.example.nio.pagefile.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -16,6 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.example.nio.core.Track;
 import com.example.nio.pagefile.PageFile;
 
 /**
@@ -26,6 +29,8 @@ public class PageFileFactoryTest {
 
 	private String pathToSamplePageFileWhichWillBeDeleted;
 	private String pathToSamplePageFileWhichPreExists;
+
+	private Track sampleTrack;
 
 	/**
 	 * @throws java.lang.Exception
@@ -63,6 +68,14 @@ public class PageFileFactoryTest {
 								.asFileAttribute(PosixFilePermissions
 										.fromString("rw-r--r--"))).toFile()
 				.getAbsolutePath();
+
+		sampleTrack = new Track() {
+
+			@Override
+			public String getTrackName() {
+				return "Sample Track";
+			}
+		};
 	}
 
 	/**
@@ -85,12 +98,14 @@ public class PageFileFactoryTest {
 		// delete the created temporary file for the operation to succeed.
 		assertTrue(new File(pathToSamplePageFileWhichWillBeDeleted).delete());
 		PageFile sampleFile = PageFileFactory.getSingletonInstance()
-				.createPageFile(pathToSamplePageFileWhichWillBeDeleted, false);
+				.createPageFile(sampleTrack,
+						pathToSamplePageFileWhichWillBeDeleted, false);
 
 		assertTrue(sampleFile.getPathToResource().toFile().exists());
 
-		// We cannot check for the track as it does not exist yet.
-		// assertNotNull(sampleFile.getTrack());
+		assertNotNull(sampleFile.getTrack());
+		assertEquals(sampleTrack.getTrackName(), sampleFile.getTrack()
+				.getTrackName());
 	}
 
 	/**
@@ -105,11 +120,13 @@ public class PageFileFactoryTest {
 
 		// delete the created temporary file for the operation to succeed.
 		PageFile sampleFile = PageFileFactory.getSingletonInstance()
-				.createPageFile(pathToSamplePageFileWhichPreExists, true);
+				.createPageFile(sampleTrack,
+						pathToSamplePageFileWhichPreExists, true);
 
 		assertTrue(sampleFile.getPathToResource().toFile().exists());
 
-		// We cannot check for the track as it does not exist yet.
-		// assertNotNull(sampleFile.getTrack());
+		assertNotNull(sampleFile.getTrack());
+		assertEquals(sampleTrack.getTrackName(), sampleFile.getTrack()
+				.getTrackName());
 	}
 }

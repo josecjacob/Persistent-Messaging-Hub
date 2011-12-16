@@ -46,8 +46,9 @@ public class PageFileFactory {
 	 * @return An instance of {@link PageFile}.
 	 * @throws IOException
 	 */
-	public PageFile createPageFile(final String absolutePath,
-			final boolean overwrite) throws IOException {
+	public PageFile createPageFile(final Track track,
+			final String absolutePath, final boolean overwrite)
+			throws IOException {
 		if (overwrite) {
 			Preconditions.checkState(new File(absolutePath).exists());
 
@@ -55,7 +56,7 @@ public class PageFileFactory {
 
 				@Override
 				public Track getTrack() {
-					return null;
+					return track;
 				}
 
 				@Override
@@ -73,7 +74,7 @@ public class PageFileFactory {
 
 				@Override
 				public Track getTrack() {
-					return null;
+					return track;
 				}
 
 				@Override

@@ -55,10 +55,8 @@ public class PageFileUtility {
 	 * 
 	 * Preconditions:
 	 * 
-	 * <p>
-	 * 1) The file should exist.
-	 * <p>
-	 * 2) The file's size should be the same as pageSize * numberOfPages.
+	 * 1) The file should exist. 2) The file's size should be the same as
+	 * pageSize * numberOfPages.
 	 * 
 	 * @param pageFileLocation
 	 *            The fully qualified path to the file. This should be the

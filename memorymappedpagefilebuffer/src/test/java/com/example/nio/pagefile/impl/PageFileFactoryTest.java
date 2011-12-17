@@ -20,6 +20,8 @@ import org.junit.Test;
 
 import com.example.nio.core.Track;
 import com.example.nio.pagefile.PageFile;
+import com.example.nio.pagefile.impl.mac.PageFileMacFactory;
+import com.example.nio.pagefile.impl.mac.PageFileMacUtility;
 
 /**
  * @author chira
@@ -37,6 +39,8 @@ public class PageFileFactoryTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		((PageFileMacFactory) PageFileMacFactory.getSingletonInstance())
+				.setPlatformUtility(new PageFileMacUtility());
 	}
 
 	/**
@@ -87,7 +91,7 @@ public class PageFileFactoryTest {
 
 	/**
 	 * Test method for
-	 * {@link com.example.nio.pagefile.impl.PageFileFactory#createPageFile(java.lang.String, boolean)}
+	 * {@link com.example.nio.pagefile.impl.mac.PageFileMacFactory#createPageFile(java.lang.String, boolean)}
 	 * .
 	 * 
 	 * @throws IOException
@@ -97,7 +101,7 @@ public class PageFileFactoryTest {
 
 		// delete the created temporary file for the operation to succeed.
 		assertTrue(new File(pathToSamplePageFileWhichWillBeDeleted).delete());
-		PageFile sampleFile = PageFileFactory.getSingletonInstance()
+		PageFile sampleFile = PageFileMacFactory.getSingletonInstance()
 				.createPageFile(sampleTrack,
 						pathToSamplePageFileWhichWillBeDeleted, false);
 
@@ -110,7 +114,7 @@ public class PageFileFactoryTest {
 
 	/**
 	 * Test method for
-	 * {@link com.example.nio.pagefile.impl.PageFileFactory#createPageFile(java.lang.String, boolean)}
+	 * {@link com.example.nio.pagefile.impl.mac.PageFileMacFactory#createPageFile(java.lang.String, boolean)}
 	 * .
 	 * 
 	 * @throws IOException
@@ -119,7 +123,7 @@ public class PageFileFactoryTest {
 	public void testCreatePageFileWhereItPreExists() throws IOException {
 
 		// delete the created temporary file for the operation to succeed.
-		PageFile sampleFile = PageFileFactory.getSingletonInstance()
+		PageFile sampleFile = PageFileMacFactory.getSingletonInstance()
 				.createPageFile(sampleTrack,
 						pathToSamplePageFileWhichPreExists, true);
 

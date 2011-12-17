@@ -8,7 +8,12 @@ import java.nio.file.Path;
 import com.example.nio.core.Track;
 
 /**
+ * A Page File represents a unit of persistence that is associated with a track.
+ * There can be multiple page files per track, each holding pages that represent
+ * a persistent message.
  * 
+ * The underlying resource, typically is a file that is memory mapped into to
+ * speed the process of integration.
  * 
  * @author chira
  */

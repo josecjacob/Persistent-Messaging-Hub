@@ -2,6 +2,7 @@ package com.example.nio.core.impl;
 
 import com.example.nio.core.Track;
 import com.example.nio.pagefile.PageFile;
+import com.example.nio.pagefile.impl.mac.PageFileMacFactory;
 
 /**
  * This factory will be used to prepare various tracks within the system. Each
@@ -12,11 +13,49 @@ import com.example.nio.pagefile.PageFile;
 public class TrackFactory {
 
 	/**
+	 * SingletonHolder is loaded on the first execution of
+	 * {@link TrackFactory#getInstance()} or the first access to
+	 * SingletonHolder.singleton, not before.
+	 */
+	private static class SingletonHolder {
+		private volatile static TrackFactory singleton = new TrackFactory();
+	}
+
+	/**
+	 * Get the singleton instance of the {@link TrackFactory} class.
+	 * 
+	 * @return An instance of {@link TrackFactory}.
+	 */
+	public static TrackFactory getInstance() {
+		return SingletonHolder.singleton;
+	}
+
+	/**
+	 * The private constructor, to prevent the creation of the factory from
+	 * outside of this class.
+	 */
+	private TrackFactory() {
+	}
+
+	/**
 	 * @param trackName
 	 * @param underlyingPageFile
 	 * @return
 	 */
-	public Track createTrack(String trackName, PageFile underlyingPageFile) {
-		return null;
+	public Track createTrack(final String trackName) {
+		return new Track() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see com.example.nio.core.Track#getTrackName()
+			 * 
+			 * The track name string embedded in this object.
+			 */
+			@Override
+			public String getTrackName() {
+				return trackName;
+			}
+		};
 	}
 }

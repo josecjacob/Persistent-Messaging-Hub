@@ -1,18 +1,24 @@
 package com.example.nio.pagefile.util;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
-import com.google.common.base.Preconditions;
-
-public class PageFileUtility {
+/**
+ * All platform specific page file utilities will implement this interface and
+ * help prepare and create page files.
+ * 
+ * The two methods:
+ * 
+ * {@link PageFileUtility#preparePageFile(String)} and
+ * {@link PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(Path, long, long)}
+ * 
+ * are to be implemented in a platform specific manner.
+ * 
+ * @author chira
+ */
+public interface PageFileUtility {
 
 	/**
 	 * Prepare a page file that will be used as the backing store for all queued
@@ -24,29 +30,7 @@ public class PageFileUtility {
 	 * @throws IOException
 	 *             If an I/O error occurs.
 	 */
-	public static void preparePageFile(String pageFileLocation)
-			throws IOException {
-
-		Preconditions.checkState(!new File(pageFileLocation).exists());
-
-		ProcessBuilder launcher = new ProcessBuilder();
-		launcher.redirectErrorStream(true);
-
-		launcher.command("/bin/dd", // The Command
-				"if=/dev/zero", // The input file, chose this for speed
-				"of=" + pageFileLocation, // The output file
-				"bs=" + Constants.PAGE_SIZE, // The page size
-				"count=" + Constants.NUMBER_OF_PAGES); // The total pages we
-														// need in the file
-		Process dd = launcher.start(); // And launch a new process
-
-		// Wait to be sure.
-		try {
-			dd.waitFor();
-		} catch (InterruptedException ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
+	public void preparePageFile(String pageFileLocation) throws IOException;
 
 	/**
 	 * Create a queue of buffers that slice a memory mapped, read write file.
@@ -70,19 +54,7 @@ public class PageFileUtility {
 	 * @throws IOException
 	 *             If an I/O error occurs.
 	 */
-	public static Queue<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
+	public Queue<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
 			Path pageFileLocation, long pageSize, long numberOfPages)
-			throws IOException {
-		Preconditions.checkState(pageFileLocation.toFile().exists());
-		Preconditions.checkState(pageSize * numberOfPages == Files
-				.size(pageFileLocation));
-		FileChannel rwChannel = new RandomAccessFile(pageFileLocation.toFile(),
-				"rws").getChannel();
-
-		Queue<ByteBuffer> buffers = new PriorityQueue<ByteBuffer>();
-		for (int i = 0; i < Constants.NUMBER_OF_PAGES; i++)
-			buffers.add(rwChannel.map(FileChannel.MapMode.READ_WRITE, i
-					* pageSize, pageSize));
-		return buffers;
-	}
+			throws IOException;
 }

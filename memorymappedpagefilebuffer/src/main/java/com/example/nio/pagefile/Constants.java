@@ -1,7 +1,8 @@
-package com.example.nio.pagefile.util;
+package com.example.nio.pagefile;
 
 /**
- * The list of constants that we will use within the project.
+ * The list of general constants that we will use within the project. There can
+ * be specific constants that represent platform specific information.
  * 
  * @author chira
  */

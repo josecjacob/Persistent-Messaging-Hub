@@ -19,11 +19,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.example.nio.pagefile.util.Constants;
-import com.example.nio.pagefile.util.PageFileUtility;
+import com.example.nio.pagefile.Constants;
+import com.example.nio.pagefile.impl.mac.PageFileMacUtility;
 
 /**
- * Tests for {@link PageFileUtility}.
+ * Tests for {@link PageFileMacUtility}.
  * 
  * @author chira
  */
@@ -36,6 +36,8 @@ public class PageFileUtilityTest {
 			.allocate((int) Constants.PAGE_SIZE);
 	private static final ByteBuffer zeroFilledBuffer = ByteBuffer
 			.allocate((int) Constants.PAGE_SIZE);
+
+	private PageFileUtility classUnderTest;
 
 	/**
 	 * @throws java.lang.Exception
@@ -73,6 +75,8 @@ public class PageFileUtilityTest {
 			bigFileInTempDuplicate.delete();
 
 		Thread.sleep(100);
+
+		classUnderTest = new PageFileMacUtility();
 	}
 
 	/**
@@ -89,7 +93,7 @@ public class PageFileUtilityTest {
 
 	/**
 	 * Test method for
-	 * {@link com.example.nio.pagefile.util.PageFileUtility#preparePageFile(java.nio.file.Path)}
+	 * {@link com.example.nio.pagefile.impl.mac.PageFileMacUtility#preparePageFile(java.nio.file.Path)}
 	 * .
 	 * 
 	 * @throws IOException
@@ -97,7 +101,7 @@ public class PageFileUtilityTest {
 	@Test
 	public void testPreparePageFile() throws IOException {
 
-		PageFileUtility.preparePageFile(bigFileInTemp.getAbsolutePath());
+		classUnderTest.preparePageFile(bigFileInTemp.getAbsolutePath());
 		assertTrue(bigFileInTemp.exists());
 		assertEquals(Constants.SIZE_OF_PAGE_FILE,
 				Files.size(bigFileInTemp.toPath()));
@@ -105,7 +109,7 @@ public class PageFileUtilityTest {
 
 /**
 	 * Test method for
-	 * {@link com.example.nio.pagefile.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * {@link com.example.nio.pagefile.impl.mac.PageFileMacUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
 	 * .
 	 * 
 	 * @throws IOException
@@ -114,8 +118,8 @@ public class PageFileUtilityTest {
 	public void testMemoryMappedFileDirectBufferWithSplitBufferOfPageSize()
 			throws IOException {
 
-		PageFileUtility.preparePageFile(bigFileInTemp.getAbsolutePath());
-		Queue<ByteBuffer> directBufferQueues = PageFileUtility
+		classUnderTest.preparePageFile(bigFileInTemp.getAbsolutePath());
+		Queue<ByteBuffer> directBufferQueues = classUnderTest
 				.createReadWriteMemoryMappedFileBufferQueue(
 						bigFileInTemp.toPath(), Constants.PAGE_SIZE,
 						Constants.NUMBER_OF_PAGES);
@@ -134,7 +138,7 @@ public class PageFileUtilityTest {
 
 /**
 	 * Test method for
-	 * {@link com.example.nio.pagefile.util.PageFileUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
+	 * {@link com.example.nio.pagefile.impl.mac.PageFileMacUtility#createReadWriteMemoryMappedFileBufferQueue(java.nio.file.Path, long, long)
 	 * .
 	 * 
 	 * @throws IOException
@@ -143,8 +147,8 @@ public class PageFileUtilityTest {
 	public void testFillAndVerifyQueueBackedByAMemoryMappedFile()
 			throws IOException {
 
-		PageFileUtility.preparePageFile(bigFileInTemp.getAbsolutePath());
-		Queue<ByteBuffer> directBufferQueues = PageFileUtility
+		classUnderTest.preparePageFile(bigFileInTemp.getAbsolutePath());
+		Queue<ByteBuffer> directBufferQueues = classUnderTest
 				.createReadWriteMemoryMappedFileBufferQueue(
 						bigFileInTemp.toPath(), Constants.PAGE_SIZE,
 						Constants.NUMBER_OF_PAGES);
@@ -158,9 +162,9 @@ public class PageFileUtilityTest {
 			assertTrue("At iteration: " + i++ + " buffers were not equal.",
 					sampleBuffer.equals(aUnit));
 
-		PageFileUtility.preparePageFile(bigFileInTempDuplicate
-				.getAbsolutePath());
-		Queue<ByteBuffer> directBufferQueuesForDuplicate = PageFileUtility
+		classUnderTest
+				.preparePageFile(bigFileInTempDuplicate.getAbsolutePath());
+		Queue<ByteBuffer> directBufferQueuesForDuplicate = classUnderTest
 				.createReadWriteMemoryMappedFileBufferQueue(
 						bigFileInTempDuplicate.toPath(), Constants.PAGE_SIZE,
 						Constants.NUMBER_OF_PAGES);

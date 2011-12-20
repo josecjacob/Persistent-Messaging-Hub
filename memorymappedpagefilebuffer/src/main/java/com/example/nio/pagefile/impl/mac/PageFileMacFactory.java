@@ -5,7 +5,6 @@ package com.example.nio.pagefile.impl.mac;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 import com.example.nio.core.Track;
 import com.example.nio.pagefile.PageFile;
@@ -59,15 +58,18 @@ public class PageFileMacFactory implements PageFileFactory {
 	public PageFile createPageFile(final Track track,
 			final String absolutePath, final boolean overwrite)
 			throws IOException {
+		File pageFile = new File(absolutePath);
 		if (overwrite) {
-			Preconditions.checkState(new File(absolutePath).exists());
+			Preconditions.checkState(pageFile.exists());
 
-			return new MacPageFile(track, new File(absolutePath).toPath());
+			return new MacPageFile(pageFile.getAbsolutePath(), track,
+					pageFile.toPath());
 		} else {
 			Preconditions.checkState(!(new File(absolutePath).exists()));
 
 			this.getPlatformUtility().preparePageFile(absolutePath);
-			return new MacPageFile(track, new File(absolutePath).toPath());
+			return new MacPageFile(pageFile.getAbsolutePath(), track,
+					pageFile.toPath());
 		}
 	}
 

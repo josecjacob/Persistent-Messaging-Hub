@@ -2,7 +2,6 @@ package com.example.nio.core.impl;
 
 import com.example.nio.core.Track;
 import com.example.nio.pagefile.PageFile;
-import com.example.nio.pagefile.impl.mac.PageFileMacFactory;
 
 /**
  * This factory will be used to prepare various tracks within the system. Each
@@ -38,24 +37,14 @@ public class TrackFactory {
 	}
 
 	/**
+	 * Create a {@link Track} given the track name.
+	 * 
 	 * @param trackName
 	 * @param underlyingPageFile
 	 * @return
 	 */
 	public Track createTrack(final String trackName) {
-		return new Track() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see com.example.nio.core.Track#getTrackName()
-			 * 
-			 * The track name string embedded in this object.
-			 */
-			@Override
-			public String getTrackName() {
-				return trackName;
-			}
-		};
+		return new SimpleTrack(trackName);
 	}
 }

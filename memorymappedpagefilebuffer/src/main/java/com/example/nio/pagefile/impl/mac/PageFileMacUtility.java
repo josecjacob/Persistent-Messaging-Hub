@@ -7,8 +7,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.nio.pagefile.Constants;
 import com.example.nio.pagefile.util.PageFileUtility;
@@ -60,7 +60,7 @@ public class PageFileMacUtility implements PageFileUtility {
 	 * long)
 	 */
 	@Override
-	public Queue<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
+	public List<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
 			Path pageFileLocation, long pageSize, long numberOfPages)
 			throws IOException {
 		Preconditions.checkState(pageFileLocation.toFile().exists());
@@ -69,7 +69,7 @@ public class PageFileMacUtility implements PageFileUtility {
 		FileChannel rwChannel = new RandomAccessFile(pageFileLocation.toFile(),
 				"rws").getChannel();
 
-		Queue<ByteBuffer> buffers = new PriorityQueue<ByteBuffer>();
+		List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
 		for (int i = 0; i < Constants.NUMBER_OF_PAGES; i++)
 			buffers.add(rwChannel.map(FileChannel.MapMode.READ_WRITE, i
 					* pageSize, pageSize));

@@ -3,7 +3,7 @@ package com.example.nio.pagefile.util;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
-import java.util.Queue;
+import java.util.List;
 
 /**
  * All platform specific page file utilities will implement this interface and
@@ -54,7 +54,7 @@ public interface PageFileUtility {
 	 * @throws IOException
 	 *             If an I/O error occurs.
 	 */
-	public Queue<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
+	public List<ByteBuffer> createReadWriteMemoryMappedFileBufferQueue(
 			Path pageFileLocation, long pageSize, long numberOfPages)
 			throws IOException;
 }

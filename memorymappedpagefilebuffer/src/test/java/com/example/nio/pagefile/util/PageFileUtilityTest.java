@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -119,12 +119,12 @@ public class PageFileUtilityTest {
 			throws IOException {
 
 		classUnderTest.preparePageFile(bigFileInTemp.getAbsolutePath());
-		Queue<ByteBuffer> directBufferQueues = classUnderTest
+		List<ByteBuffer> directBufferQueues = classUnderTest
 				.createReadWriteMemoryMappedFileBufferQueue(
 						bigFileInTemp.toPath(), Constants.PAGE_SIZE,
 						Constants.NUMBER_OF_PAGES);
 		assertEquals(Constants.NUMBER_OF_PAGES, directBufferQueues.size());
-		assertTrue(directBufferQueues instanceof PriorityQueue<?>);
+		assertTrue(directBufferQueues instanceof ArrayList<?>);
 		int i = 1;
 		for (ByteBuffer aUnit : directBufferQueues) {
 			assertTrue(aUnit.isDirect());
@@ -148,12 +148,12 @@ public class PageFileUtilityTest {
 			throws IOException {
 
 		classUnderTest.preparePageFile(bigFileInTemp.getAbsolutePath());
-		Queue<ByteBuffer> directBufferQueues = classUnderTest
+		List<ByteBuffer> directBufferQueues = classUnderTest
 				.createReadWriteMemoryMappedFileBufferQueue(
 						bigFileInTemp.toPath(), Constants.PAGE_SIZE,
 						Constants.NUMBER_OF_PAGES);
 		assertEquals(Constants.NUMBER_OF_PAGES, directBufferQueues.size());
-		assertTrue(directBufferQueues instanceof PriorityQueue<?>);
+		assertTrue(directBufferQueues instanceof ArrayList<?>);
 		for (ByteBuffer aUnit : directBufferQueues)
 			fillBufferWithRawData(aUnit);
 
@@ -164,7 +164,7 @@ public class PageFileUtilityTest {
 
 		classUnderTest
 				.preparePageFile(bigFileInTempDuplicate.getAbsolutePath());
-		Queue<ByteBuffer> directBufferQueuesForDuplicate = classUnderTest
+		List<ByteBuffer> directBufferQueuesForDuplicate = classUnderTest
 				.createReadWriteMemoryMappedFileBufferQueue(
 						bigFileInTempDuplicate.toPath(), Constants.PAGE_SIZE,
 						Constants.NUMBER_OF_PAGES);
@@ -174,8 +174,9 @@ public class PageFileUtilityTest {
 			assertTrue("At iteration: " + i++ + " buffers were not equal.",
 					zeroFilledBuffer.equals(aUnit));
 
+		i = 0;
 		for (ByteBuffer aDuplicateUnit : directBufferQueuesForDuplicate)
-			aDuplicateUnit.put(directBufferQueues.poll());
+			aDuplicateUnit.put(directBufferQueues.get(i++));
 
 		i = 1;
 		for (ByteBuffer aDuplicateUnit : directBufferQueuesForDuplicate) {
